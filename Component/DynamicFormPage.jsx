@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
+const BACKEND_URL = 'https://6a785d9a-fa58-4020-8976-fa8ba6aac527-00-13yhiqal6rs6t.sisko.replit.dev/api/url';
+
 const DynamicFormPage = () => {
   const [forms, setForms] = useState([]);
 
   useEffect(() => {
     const fetchForms = async () => {
       try {
-        const res = await axios.get('http://localhost:5000/api/forms');
+        const res = await axios.get(BACKEND_URL);
         setForms(res.data);
       } catch (err) {
         console.error('Failed to fetch forms:', err);
@@ -30,7 +32,7 @@ const DynamicFormPage = () => {
     const form = forms[index];
     if (form._id) {
       try {
-        await axios.delete(`http://localhost:5000/api/forms/${form._id}`);
+        await axios.delete(`${BACKEND_URL}/${form._id}`);
       } catch (err) {
         console.error('Error deleting form:', err);
       }
@@ -46,7 +48,7 @@ const DynamicFormPage = () => {
 
     if (updatedForms[index]._id) {
       try {
-        await axios.put(`http://localhost:5000/api/forms/${updatedForms[index]._id}`, clearedForm);
+        await axios.put(`${BACKEND_URL}/${updatedForms[index]._id}`, clearedForm);
       } catch (err) {
         console.error('Failed to clear form in DB:', err);
       }
@@ -56,7 +58,6 @@ const DynamicFormPage = () => {
   const handleSubmit = async (index) => {
     const form = forms[index];
 
-    // Validation: check all fields except status are non-empty
     if (!form.appName.trim() || !form.packageName.trim() || !form.url.trim()) {
       alert('⚠️ All fields (App Name, Package Name, App URL) are required!');
       return;
@@ -64,9 +65,9 @@ const DynamicFormPage = () => {
 
     try {
       if (form._id) {
-        await axios.put(`http://localhost:5000/api/forms/${form._id}`, form);
+        await axios.put(`${BACKEND_URL}/${form._id}`, form);
       } else {
-        const res = await axios.post('http://localhost:5000/api/forms', form);
+        const res = await axios.post(BACKEND_URL, form);
         const updatedForms = [...forms];
         updatedForms[index] = res.data;
         setForms(updatedForms);
@@ -79,19 +80,20 @@ const DynamicFormPage = () => {
   };
 
   return (
-    <div style={{ padding: '20px', margin: 'auto' }}>
-      <h2 style={{ fontSize: '24px', fontWeight: 'bold' }}>Dynamic App Info Forms</h2>
+    <div style={{ padding: '20px', maxWidth: '800px', margin: 'auto' }}>
+      <h2 style={{ fontSize: '24px', fontWeight: 'bold', marginBottom: '16px' }}>
+        Dynamic App Info Forms
+      </h2>
 
       {forms.map((form, index) => (
         <div
           key={form._id || index}
           style={{
-            background: '#fff',
-            padding: '30px',
-            marginTop: '16px',
+            background: '#f9f9f9',
+            padding: '20px',
+            marginBottom: '16px',
             borderRadius: '8px',
-            boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-            width: "100%",
+            boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
           }}
         >
           <input
@@ -99,21 +101,21 @@ const DynamicFormPage = () => {
             placeholder="App Name"
             value={form.appName}
             onChange={(e) => handleChange(index, 'appName', e.target.value)}
-            style={{ display: 'block', marginBottom: '8px', width: '100%', padding: '8px' }}
+            style={{ width: '100%', padding: '10px', marginBottom: '8px' }}
           />
           <input
             type="text"
             placeholder="Package Name"
             value={form.packageName}
             onChange={(e) => handleChange(index, 'packageName', e.target.value)}
-            style={{ display: 'block', marginBottom: '8px', width: '100%', padding: '8px' }}
+            style={{ width: '100%', padding: '10px', marginBottom: '8px' }}
           />
           <input
             type="url"
             placeholder="App URL"
             value={form.url}
             onChange={(e) => handleChange(index, 'url', e.target.value)}
-            style={{ display: 'block', marginBottom: '8px', width: '100%', padding: '8px' }}
+            style={{ width: '100%', padding: '10px', marginBottom: '8px' }}
           />
           <label style={{ display: 'block', marginBottom: '8px' }}>
             <input
@@ -124,9 +126,9 @@ const DynamicFormPage = () => {
             Status (On/Off)
           </label>
           <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
-            <button onClick={() => handleSubmit(index)}>Submit</button>
-            <button onClick={() => handleClearForm(index)}>Clear</button>
-            <button onClick={() => handleDeleteForm(index)}>Delete</button>
+            <button onClick={() => handleSubmit(index)}>💾 Submit</button>
+            <button onClick={() => handleClearForm(index)}>🧹 Clear</button>
+            <button onClick={() => handleDeleteForm(index)}>🗑️ Delete</button>
           </div>
         </div>
       ))}
