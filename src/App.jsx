@@ -3,7 +3,7 @@ import axios from 'axios';
 import DynamicFormPage from '../Component/DynamicFormPage';
 import { Route, Routes } from 'react-router';
 
-const BACKEND_URL = 'https://6a785d9a-fa58-4020-8976-fa8ba6aac527-00-13yhiqal6rs6t.sisko.replit.dev/api/url';
+const BACKEND_URL = 'http://localhost:5000/api/check';
 
 function App() {
   
@@ -17,3 +17,4 @@ function App() {
 }
 
 export default App; 
+
